@@ -1,0 +1,1 @@
+export {getagentmodel} from './aiconfig.ts';
