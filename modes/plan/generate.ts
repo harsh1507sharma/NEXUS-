@@ -1,17 +1,41 @@
-import chalk from "chalk";
-import { confirm, isCancel, text } from "@clack/prompts";
-import { ToolLoopAgent, stepCountIs, tool } from "ai";
+import {
+  Output,
+  extractJsonMiddleware,
+  generateText,
+  stepCountIs,
+  tool,
+  wrapLanguageModel,
+} from "ai";
 import { z } from "zod";
+import chalk from "chalk";
 import { getagentmodel } from "../../ai/aiconfig.ts";
 import { ActionTracker } from "../agents/action-tracker.ts";
 import { AgentExecutor } from "../agents/tool_executor.ts";
+import {createask} from "../ask/orchestrator.ts";
 import { defaultAgentConfig } from "../agents/types.ts";
 import { renderTerminalMarkdown } from "../../TUI/terminal-md.ts";
 import { runapproval} from "../agents/approvalflow.ts";
+import type { Plan, PlanStep } from "../plan/types.ts";
+import type { read } from "node:fs";
 
-export function createask(executor: AgentExecutor) {
-    return{
-            readFile:tool({
+const planSchema = z.object({
+  researchSummary: z.string(),
+  steps: z
+    .array(
+      z.object({
+        title: z.string(),
+        description: z.string(),
+        hints: z.array(z.string()),
+        complexity: z.enum(["low", "medium", "high"]),
+      }),
+    )
+    .min(1)
+    .max(15),
+});
+
+function readonlytool(executor: AgentExecutor){
+  return{
+                readFile:tool({
             description: "Read the content of a file given its relative path.",
             inputSchema: z.object({
                 path: z.string().describe("The relative path to the file to read.")
@@ -65,68 +89,59 @@ export function createask(executor: AgentExecutor) {
       }),
       execute: async ({ path: p }) => executor.readSkill(p),
         }),
-    }
+
+  }
 }
 
-function asMd(question: string, answer: string): string {
-  return `# Ask Mode\n\n## Question\n\n${question.trim()}\n\n## Answer\n\n${answer.trim()}\n`;
-}
+const PLAN_INSTRUCTIONS = (codebase: string, hasWeb: boolean) =>
+  [
+    "You are a Plan-Mode planner. You DO NOT modify files.",
+    `Workspace: ${codebase}`,
+    "Use read-only tools for codebase/skills research.",
+    hasWeb
+      ? "Web tools are available (web_search/web_crawl/fetch_url). Use only when needed."
+      : "Web tools are unavailable (no FIRECRAWL_API_KEY).",
+    "Output must match the provided JSON schema.",
+    "Keep it short: 1–15 steps.",
+  ].join("\n");
 
-export async function runAskMode() {
-  console.log(chalk.bold("\n❓ Ask Mode\n"));
+  export async function generateplan(goal: string){
+    const config = defaultAgentConfig();
+    config.tools.allowFileCreation = true;
+    config.tools.allowFileModification = false;
+    config.tools.allowFolderCreation = false;
+    config.tools.allowShellExecution = false;
+    const tracker = new ActionTracker();
+    const executor = new AgentExecutor(config, tracker);
 
-  const question = await text({ message: "What do you want to ask?" });
-  if (isCancel(question) || !question.trim()) return;
-
-  const config = defaultAgentConfig();
-  config.tools.allowFileCreation = true;
-  config.tools.allowFileModification = false;
-  config.tools.allowFolderCreation = false;
-  config.tools.allowShellExecution = false;
-
-  const tracker = new ActionTracker();
-  const executor = new AgentExecutor(config,tracker);
-
-  const tools = {
-    ...createask(executor),
-  };
-
-  const agent = new ToolLoopAgent({
-    model: getagentmodel(),
-    stopWhen: stepCountIs(20),
-    tools,
-  });
-
-  const result = await agent.generate({ prompt: question.trim() });
-  const answer = result.text?.trim() || "(no answer)";
-  console.log("\n" + renderTerminalMarkdown(answer) + "\n");
-
-  const wantsSave = await confirm({
-    message:"Save this answer to a .md file in the current directory?",
-    initialValue:false,
-  });
-  if (isCancel(wantsSave) || !wantsSave) return;
-
-   const filename = await text({
-    message:"Filename",
-    initialValue:"ask.md",
-     validate: (v) => {
-      const s = (v ?? '').trim();
-      if (!s) return 'Required';
-      if (s.includes('..') || s.includes('/') || s.includes('\\')) return 'No paths';
-      if (!s.toLowerCase().endsWith('.md')) return 'Must end with .md';
-    },
+    const hasWeb = false;
+    const model = wrapLanguageModel({
+    model:getagentmodel(),
+    middleware:extractJsonMiddleware()
   })
+    
+    const tools = {...readonlytool(executor)};
 
-  if(isCancel(filename)) return;
+    console.log(chalk.blue("Generating plan..."));
 
-  executor.createFile(filename , asMd(question , answer));
-  const ok = await runapproval(tracker);
-  if(!ok) return executor.clearStaging();
+    const result = await generateText({
+      model,
+      tools,
+      stopWhen : stepCountIs(20),
+      system: PLAN_INSTRUCTIONS(config.codebasePath, hasWeb),
+      prompt: `Goal: ${goal}`,
+      output: Output.object({schema: planSchema}),
+    })
+    const validated = planSchema.parse(result.output);
 
-  executor.applyApprovedFromTracker();
-  executor.clearStaging();
+    const steps:PlanStep[] = validated.steps.map((s,i)=>({
+    id:`step-${i+1}`,
+    title:s.title,
+    description:s.description,
+    hints:s.hints,
+    complexity:s.complexity
+    }));
 
-}
+    return {goal , researchSummary:validated.researchSummary ,steps}
 
-
+  }
