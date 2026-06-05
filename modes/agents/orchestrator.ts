@@ -6,6 +6,8 @@ import { AgentExecutor } from "./tool_executor.ts";
 import { createAgentTools } from "./agent-tools.ts";
 import { stepCountIs, ToolLoopAgent } from "ai";
 import { getagentmodel } from "../../ai/index.ts";
+import { renderTerminalMarkdown } from "../../TUI/terminal-md.ts";
+import { runapproval } from "./approvalflow.ts";
 
 export async function runAgent(){
     console.log(chalk.green("Welcome to the Agent Mode!"));
@@ -51,12 +53,24 @@ export async function runAgent(){
 
   if(result.text?.trim()){
     console.log(chalk.blue("Agent Result:"));
-    console.log(result.text);
+    console.log(renderTerminalMarkdown(result.text));
   }
 
+  const ok = await runapproval(tracker);
 
+  if(!ok) return executor.clearStaging();
 
+  const applyResult = executor.applyApprovedFromTracker();
 
+  if(applyResult.errors.length){
+    console.log(chalk.red("Errors applying changes:")); 
+    for(const err of applyResult.errors){
+        console.log(chalk.red("- " + err));
+    }
+  } else {
+    console.log(chalk.green("All approved changes have been applied successfully!"));
+  }
 
-  
+  executor.clearStaging();
+
 } 
