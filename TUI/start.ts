@@ -2,6 +2,7 @@ import {select, isCancel} from "@clack/prompts";
 import chalk from "chalk";
 import figlet from "figlet";
 import {runcli} from "../modes/cli.ts";
+import {runtelegram} from "../modes/telegram/index.ts";
 
 const BANNER_FONT = 'ANSI Shadow';
 const SHADOW = chalk.hex('#FF5733'); // Example color for the banner text
@@ -55,7 +56,7 @@ export async function Run() {
             await runcli();
         }
         else if(mode=='telegram'){
-            console.log(chalk.green('You selected Telegram mode!'));
+            await runtelegram();
         }
         else if(mode=='autopilot'){
             console.log(chalk.green('You selected Autopilot AI mode!'));
