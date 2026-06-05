@@ -17,7 +17,7 @@ import { renderTerminalMarkdown } from "../../TUI/terminal-md.ts";
 import { runapproval} from "../agents/approvalflow.ts";
 import type { Plan, PlanStep } from "../plan/types.ts";
 import type { read } from "node:fs";
-import {createWebTools} from "./web-scapping.ts";
+import {createWebTools} from "./web-scrapping.ts";
 
 const planSchema = z.object({
   researchSummary: z.string(),

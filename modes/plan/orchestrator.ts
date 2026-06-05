@@ -12,7 +12,7 @@ import { generateplan } from "./generate.ts";
 import { printPlan, selectSteps } from "./printplan.ts";
 import type { PlanStep } from "./types.ts";
 import { createAgentTools } from "../agents/agent-tools.ts";
-import  { createWebTools } from "./web-scapping.ts";
+import  { createWebTools } from "./web-scrapping.ts";
 
 
 export async function createplan():Promise<void>{

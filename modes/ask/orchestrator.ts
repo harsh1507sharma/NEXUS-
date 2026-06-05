@@ -9,7 +9,7 @@ import { defaultAgentConfig } from "../agents/types.ts";
 import { renderTerminalMarkdown } from "../../TUI/terminal-md.ts";
 import { runapproval} from "../agents/approvalflow.ts";
 import { create } from "node:domain";
-import { createWebTools } from "../plan/web-scapping.ts";
+import { createWebTools } from "../plan/web-scrapping.ts";
 
 export function createask(executor: AgentExecutor) {
     return{
