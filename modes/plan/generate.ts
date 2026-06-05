@@ -17,6 +17,7 @@ import { renderTerminalMarkdown } from "../../TUI/terminal-md.ts";
 import { runapproval} from "../agents/approvalflow.ts";
 import type { Plan, PlanStep } from "../plan/types.ts";
 import type { read } from "node:fs";
+import {createWebTools} from "./web-scapping.ts";
 
 const planSchema = z.object({
   researchSummary: z.string(),
@@ -114,13 +115,13 @@ const PLAN_INSTRUCTIONS = (codebase: string, hasWeb: boolean) =>
     const tracker = new ActionTracker();
     const executor = new AgentExecutor(config, tracker);
 
-    const hasWeb = false;
+    const hasWeb = !!process.env.FIRECRAWL_API_KEY;
     const model = wrapLanguageModel({
     model:getagentmodel(),
     middleware:extractJsonMiddleware()
   })
     
-    const tools = {...readonlytool(executor)};
+    const tools = {...readonlytool(executor), ...createWebTools(tracker)};
 
     console.log(chalk.blue("Generating plan..."));
 

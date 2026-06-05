@@ -8,6 +8,8 @@ import { AgentExecutor } from "../agents/tool_executor.ts";
 import { defaultAgentConfig } from "../agents/types.ts";
 import { renderTerminalMarkdown } from "../../TUI/terminal-md.ts";
 import { runapproval} from "../agents/approvalflow.ts";
+import { create } from "node:domain";
+import { createWebTools } from "../plan/web-scapping.ts";
 
 export function createask(executor: AgentExecutor) {
     return{
@@ -89,6 +91,7 @@ export async function runAskMode() {
 
   const tools = {
     ...createask(executor),
+    ...createWebTools(tracker),
   };
 
   const agent = new ToolLoopAgent({

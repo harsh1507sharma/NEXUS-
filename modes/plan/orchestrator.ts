@@ -12,6 +12,7 @@ import { generateplan } from "./generate.ts";
 import { printPlan, selectSteps } from "./printplan.ts";
 import type { PlanStep } from "./types.ts";
 import { createAgentTools } from "../agents/agent-tools.ts";
+import  { createWebTools } from "./web-scapping.ts";
 
 
 export async function createplan():Promise<void>{
@@ -45,8 +46,10 @@ function stepPrompt(goal: string, step: PlanStep): string {
     const config = defaultAgentConfig();
     const tracker = new ActionTracker();
     const executor = new AgentExecutor(config,tracker);
+
     const tools = {
       ...createAgentTools(executor),
+      ...createWebTools(tracker),
     };
 
    
