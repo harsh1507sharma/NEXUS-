@@ -44,8 +44,8 @@ export function createAgentTools(executor: AgentExecutor) {
         path: z.string().describe("Relative directory path"),
       }),
       execute: async ({ path: p }) => executor.createFolder(p),
-    }),
-
+       }),
+ 
     list_files: tool({
       description: "List files and directories under a path.",
       inputSchema: z.object({
