@@ -40,7 +40,7 @@ export async function Run() {
         message: 'Select a mode:',
         options: [{ value: 'cli', label: 'CLI ' },
                  { value: 'telegram', label: 'Telegram' },
-                 { value: 'autopilot', label: 'Autopilot AI (Advanced)' },
+                 { value: 'MCP', label: 'MCP SERVER' },
                  { value: 'cancel', label: 'Cancel' }
         ]
         });
@@ -58,8 +58,8 @@ export async function Run() {
         else if(mode=='telegram'){
             await runtelegram();
         }
-        else if(mode=='autopilot'){
-            console.log(chalk.green('You selected Autopilot AI mode!'));
+        else if(mode=='MCP'){
+            console.log(chalk.green('You selected MCP SERVER mode!'));
         }
         
         else if(mode=='cancel'){
