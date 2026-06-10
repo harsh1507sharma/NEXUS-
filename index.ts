@@ -20,6 +20,4 @@ program
     // Here you can add code to display the banner and prompt the user to select a mode
 });
 await program.parseAsync(process.argv);
-
-
-
+// MCP option removed — the CLI starts normally via `Start` command
