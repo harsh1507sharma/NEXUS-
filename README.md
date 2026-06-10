@@ -7,7 +7,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Bun](https://img.shields.io/badge/Runtime-Bun-fbf0df?style=flat-square&logo=bun&logoColor=black)](https://bun.sh/)
 [![OpenRouter](https://img.shields.io/badge/LLM-OpenRouter-6c47ff?style=flat-square)](https://openrouter.ai/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=flat-square)](./LICENSE)
+
 
 > A multi-interface AI agent you can run from your terminal or control remotely via Telegram — with deterministic guardrails so it never does something you didn't approve.
 
@@ -148,7 +148,7 @@ Contributions, issues, and feature requests are welcome!
 
 **Harsh Sharma** — 3rd Year B.Tech Chemical Engineering @ MNNIT Allahabad
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat-square&logo=linkedin)](https://linkedin.com/in/your-profile)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/harsh-sharma-02ba05312/)
 [![GitHub](https://img.shields.io/badge/GitHub-@harsh1507sharma-181717?style=flat-square&logo=github)](https://github.com/harsh1507sharma)
 
 ---
