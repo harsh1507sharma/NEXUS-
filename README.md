@@ -71,19 +71,18 @@ TELEGRAM_BOT_TOKEN=your_telegram_token_here   # optional, needed for Telegram mo
 FIRECRAWL_API_KEY=your_firecrawl_key_here     # optional, needed for web crawl tool
 ```
 
+
 ### Run
 
 ```bash
 bun index.ts Start
-
-
----
+```
 
 ---
 
 ## 🏗️ Architecture
 
-```text
+```
 NEXUS-/
 ├── index.ts                    # Entry point & mode router
 ├── ai/                         # LLM client & tool definitions
@@ -97,7 +96,8 @@ NEXUS-/
     ├── approvalflow.ts         # Human-in-the-loop approval gate
     └── types.ts                # Core TypeScript types & configs
 
----
+```
+
 
 ### Key Design Decisions
 
