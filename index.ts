@@ -3,6 +3,13 @@
 
 import {Command} from 'commander';
 import {Run} from "./TUI/start.js";
+import { displayHistoryCLI } from "./modes/agents/history.ts";
+
+const args = process.argv.slice(2);
+if (args.includes('--history') || args.includes('History')) {
+  displayHistoryCLI();
+  process.exit(0);
+}
 
 const program = new Command();
 

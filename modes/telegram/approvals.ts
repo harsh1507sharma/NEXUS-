@@ -4,11 +4,13 @@ import type {  AgentExecutor } from '../agents/tool_executor.ts';
 import type { ActionLog } from '../agents/types.ts';
 import { composeBeforeAfter, formatpatch } from '../agents/diffview.ts';
 import { clip } from './text.ts';
+import { saveSessionToHistory } from '../agents/history.ts';
 
 export interface ApprovalSession {
   tracker: ActionTracker;
   executor: AgentExecutor;
   pending: ActionLog[];
+  goal: string;
 }
 
 export const approvalSessions = new Map<number, ApprovalSession>();
@@ -71,11 +73,13 @@ export async function finishOrApprove(
   tracker: ActionTracker,
   executor: AgentExecutor,
   noChangesMsg: string,
+  goal: string,
 ) {
   const pending = tracker.getpendingMutations();
   if (pending.length === 0) {
     await ctx.reply(noChangesMsg);
+    saveSessionToHistory(goal, 'Telegram', tracker.getActions());
     return;
   }
-  await promptApproval(ctx, chatId, { tracker, executor, pending });
+  await promptApproval(ctx, chatId, { tracker, executor, pending, goal });
 }

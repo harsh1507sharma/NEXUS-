@@ -8,6 +8,7 @@ import { stepCountIs, ToolLoopAgent } from "ai";
 import { getagentmodel } from "../../ai/index.ts";
 import { renderTerminalMarkdown } from "../../TUI/terminal-md.ts";
 import { runapproval } from "./approvalflow.ts";
+import { saveSessionToHistory } from "./history.ts";
 
 export async function runAgent(){
     console.log(chalk.green("Welcome to the Agent Mode!"));
@@ -58,7 +59,10 @@ export async function runAgent(){
 
   const ok = await runapproval(tracker);
 
-  if(!ok) return executor.clearStaging();
+  if(!ok) {
+    saveSessionToHistory(goal.trim(), "CLI", tracker.getActions());
+    return executor.clearStaging();
+  }
 
   const applyResult = executor.applyApprovedFromTracker();
 
@@ -71,6 +75,7 @@ export async function runAgent(){
     console.log(chalk.green("All approved changes have been applied successfully!"));
   }
 
+  saveSessionToHistory(goal.trim(), "CLI", tracker.getActions());
   executor.clearStaging();
 
 } 

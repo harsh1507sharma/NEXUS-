@@ -8,6 +8,7 @@ import { defaultAgentConfig, type AgentConfig } from "../agents/types.ts";
 import { createWebTools } from "../plan/web-scrapping.ts";
 import type { Plan, PlanStep } from "../plan/types.ts";
 import { replyMd } from "./text.ts";
+import { finishOrApprove } from "./approvals.ts";
 
 
 
@@ -94,7 +95,7 @@ export async function runAgent(ctx: { reply: (t: string, o?: object) => Promise<
   });
   const { text } = await agent.generate({ prompt: goal });
   if (text?.trim()) await replyMd(ctx, text.trim());
-//   await finishOrApprove(ctx, chatId, tracker, executor, '✅ Done. No file changes were needed.');
+  await finishOrApprove(ctx, chatId, tracker, executor, '✅ Done. No file changes were needed.', goal);
 }
 
 export async function runPlanSteps(
@@ -119,5 +120,5 @@ export async function runPlanSteps(
     if (text?.trim()) await replyMd(ctx, text.trim());
   }
 
-//  await finishOrApprove(ctx, chatId, tracker, executor, '✅ All steps done. No file changes needed.');
+  await finishOrApprove(ctx, chatId, tracker, executor, '✅ All steps done. No file changes needed.', plan.goal);
 }

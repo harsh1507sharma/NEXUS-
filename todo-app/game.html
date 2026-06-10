@@ -1,0 +1,49 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Number Guessing Game</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                text-align: center;
+                margin-top: 50px;
+            }
+            input[type="number"] {
+                padding: 10px;
+                width: 50px;
+            }
+            button {
+                padding: 10px 20px;
+                margin-left: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Number Guessing Game</h1>
+        <p>1 se 100 ke beech ek number ka andaza lagao!</p>
+        <input type="number" id="guessInput" min="1" max="100">
+        <button onclick="checkGuess()">Guess</button>
+        <p id="message"></p>
+        <script>
+            const randomNumber = Math.floor(Math.random() * 100) + 1;
+            let attempts = 0;
+
+            function checkGuess() {
+                const userGuess = Number(document.getElementById('guessInput').value);     
+                attempts++;
+                let message = '';
+
+                if (userGuess === randomNumber) {
+                    message = `Sahi andaza! Aapne ${attempts} attempts mein sahi guess kiya.`;
+                } else if (userGuess < randomNumber) {
+                    message = 'Aapka guess chhota hai. Dubara koshish karein.';
+                } else {
+                    message = 'Aapka guess bada hai. Dubara koshish karein.';
+                }
+                document.getElementById('message').innerText = message;
+            }
+        </script>
+    </body>
+    </html>

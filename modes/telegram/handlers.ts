@@ -10,6 +10,7 @@ import { approvalSessions } from './approvals.ts';
 import { approvalSummary, approvalDiff } from './approvals.ts';
 import { finishOrApprove } from './approvals.ts';
 import type { AgentExecutor } from '../agents/tool_executor.ts';
+import { saveSessionToHistory } from '../agents/history.ts';
 
 
 
@@ -125,6 +126,7 @@ export function registerhandlers(bot:Telegraf){
     approvalSessions.delete(ctx.chat!.id);
     for (const a of s.pending) s.tracker.updateActionStatus(a.id, 'approved', true);
     const { errors } = s.executor.applyApprovedFromTracker();
+    saveSessionToHistory(s.goal, 'Telegram', s.tracker.getActions());
     s.executor.clearStaging();
 
     await ctx.editMessageText('✅ All changes applied.');
@@ -139,6 +141,7 @@ export function registerhandlers(bot:Telegraf){
 
     approvalSessions.delete(ctx.chat!.id);
     for (const a of s.pending) s.tracker.updateActionStatus(a.id, 'rejected', false);
+    saveSessionToHistory(s.goal, 'Telegram', s.tracker.getActions());
     s.executor.clearStaging();
 
     await ctx.editMessageText('❌ All changes rejected. Nothing was applied.');
