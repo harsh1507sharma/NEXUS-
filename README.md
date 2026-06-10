@@ -79,9 +79,11 @@ bun index.ts Start
 
 ---
 
+---
+
 ## 🏗️ Architecture
 
-```
+```text
 NEXUS-/
 ├── index.ts                    # Entry point & mode router
 ├── ai/                         # LLM client & tool definitions
@@ -94,7 +96,8 @@ NEXUS-/
     ├── tool_executor.ts        # Sandboxed tool execution engine
     ├── approvalflow.ts         # Human-in-the-loop approval gate
     └── types.ts                # Core TypeScript types & configs
-```
+
+---
 
 ### Key Design Decisions
 
