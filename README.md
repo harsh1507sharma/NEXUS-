@@ -86,6 +86,8 @@ bun index.ts --history
 
 ## 🏗️ Architecture
 
+```
+
 NEXUS-/
 ├── index.ts                    # Entry point & global argument interceptor
 ├── ai/                         # LLM client & tool definitions
@@ -102,6 +104,7 @@ NEXUS-/
 └── src/
     └── agents/
         └── history.ts          # Resolution proxy forwarding module
+
 ```
 
 
@@ -152,7 +155,7 @@ Contributions, issues, and feature requests are welcome!
 
 ## 👨‍💻 Author
 
-**Harsh Sharma** —  B.Tech Student @ MNNIT Allahabad
+**Harsh Sharma** — 3rd Year B.Tech Chemical Engineering @ MNNIT Allahabad
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/harsh-sharma-02ba05312/)
 [![GitHub](https://img.shields.io/badge/GitHub-@harsh1507sharma-181717?style=flat-square&logo=github)](https://github.com/harsh1507sharma)
