@@ -24,6 +24,7 @@
 - **Human-in-the-Loop Approvals** — high-risk actions (file writes, deletes) are quarantined until you explicitly confirm
 - **Virtual File System (VFS)** — sandboxed filesystem layer; the agent physically cannot escape your workspace
 - **Immutable Audit Trail** — every tool call, web search, and file mutation is logged and locked
+- **Session History** — Native low-footprint serialization pipeline that appends structured transaction metrics to a rolling execution history log.
 - **Web Intelligence** — Firecrawl-powered web crawling + search built in as native agent tools
 - **Beautiful CLI UI** — interactive prompts via Clack, colored output with Chalk, ASCII banners with Figlet
 
@@ -76,26 +77,31 @@ FIRECRAWL_API_KEY=your_firecrawl_key_here     # optional, needed for web crawl t
 
 ```bash
 bun index.ts Start
+
+# Direct global telemetry check (Persistent History Ledger)
+bun index.ts --history
 ```
 
 ---
 
 ## 🏗️ Architecture
 
-```
 NEXUS-/
-├── index.ts                    # Entry point & mode router
+├── index.ts                    # Entry point & global argument interceptor
 ├── ai/                         # LLM client & tool definitions
 ├── modes/
 │   ├── cli.ts                  # Terminal state machine & orchestrator
-│   └── telegram.ts             # Telegraf long-polling bot gateway
+│   ├── telegram.ts             # Telegraf long-polling bot gateway
+│   └── agents/                 # Core engine pipelines
+│       ├── action-tracker.ts   # Immutable audit trail ledger
+│       ├── tool_executor.ts    # Sandboxed tool execution engine
+│       ├── approvalflow.ts     # Human-in-the-loop approval gate
+│       ├── history.ts          # Persistent history serialization pipeline
+│       └── types.ts            # Core TypeScript types & configurations
 ├── TUI/                        # Clack / Chalk / Figlet UI components
-└── agents/
-    ├── action-tracker.ts       # Immutable audit trail ledger
-    ├── tool_executor.ts        # Sandboxed tool execution engine
-    ├── approvalflow.ts         # Human-in-the-loop approval gate
-    └── types.ts                # Core TypeScript types & configs
-
+└── src/
+    └── agents/
+        └── history.ts          # Resolution proxy forwarding module
 ```
 
 
@@ -146,7 +152,7 @@ Contributions, issues, and feature requests are welcome!
 
 ## 👨‍💻 Author
 
-**Harsh Sharma** — 3rd Year B.Tech Chemical Engineering @ MNNIT Allahabad
+**Harsh Sharma** —  B.Tech Student @ MNNIT Allahabad
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/harsh-sharma-02ba05312/)
 [![GitHub](https://img.shields.io/badge/GitHub-@harsh1507sharma-181717?style=flat-square&logo=github)](https://github.com/harsh1507sharma)
